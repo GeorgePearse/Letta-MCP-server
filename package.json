@@ -32,6 +32,7 @@
     "dev": "node src/index.js",
     "dev:sse": "node src/index.js --sse",
     "dev:http": "node src/index.js --http",
+    "list-memories": "node src/index.js --list-memories",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
