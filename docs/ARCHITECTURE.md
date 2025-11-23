@@ -106,7 +106,16 @@ graph LR
         MC3[add_mcp_tool_to_letta]
     end
 
+    subgraph "Coding Memories"
+        CM1[init_project_memory]
+        CM2[store_code_pattern]
+        CM3[record_decision]
+        CM4[store_learning]
+        CM5[recall_relevant]
+    end
+
     classDef agentTool fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef codingMemTool fill:#e0f7fa,stroke:#00838f,stroke-width:2px
     classDef memoryTool fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
     classDef passageTool fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
     classDef toolMgmt fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
@@ -117,6 +126,7 @@ graph LR
     class P1,P2,P3,P4 passageTool
     class T1,T2,T3,T4 toolMgmt
     class MC1,MC2,MC3 mcpTool
+    class CM1,CM2,CM3,CM4,CM5 codingMemTool
 ```
 
 ## Request Flow
@@ -146,7 +156,7 @@ sequenceDiagram
 graph TD
     subgraph "MCP Capabilities"
         CAP[Server Capabilities]
-        CAP --> TOOLS[Tools: 50+ tools]
+        CAP --> TOOLS[Tools: 70+ tools]
         CAP --> PROMPTS[Prompts: 5 wizards]
         CAP --> RESOURCES[Resources: Dynamic]
         

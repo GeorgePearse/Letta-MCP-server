@@ -55,10 +55,13 @@ When we receive a security bug report, we will:
 
 This application uses several environment variables that must be kept secure:
 
-- `LETTA_BASE_URL`: The base URL for the Letta API
-- `LETTA_PASSWORD`: Authentication credential for Letta API
+- `LETTA_BASE_URL`: The base URL for the Letta API (self-hosted only)
+- `LETTA_API_KEY`: API key for Letta Cloud authentication
+- `LETTA_PASSWORD`: Authentication credential for self-hosted Letta API
 - `XBACKBONE_URL`: Optional URL for XBackbone integration
 - `XBACKBONE_TOKEN`: Optional authentication token for XBackbone
+
+See [AUTHENTICATION.md](./AUTHENTICATION.md) for details on authentication methods.
 
 **Never commit these values to version control.** Always use environment variables or secure secret management systems.
 
