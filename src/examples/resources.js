@@ -360,4 +360,245 @@ All responses follow this structure:
             };
         },
     });
+
+    // =====================
+    // Coding Memories Resources
+    // =====================
+
+    // Coding Memories Projects List Resource
+    registerResource({
+        uri: 'letta://memories/projects',
+        name: 'coding_memory_projects',
+        title: 'Coding Memory Projects',
+        description: 'List of all projects with coding memories stored in Letta',
+        mimeType: 'application/json',
+        handler: async () => {
+            try {
+                const response = await server.api.get('/agents', {
+                    headers: server.getApiHeaders(),
+                    params: { limit: 100 },
+                });
+
+                const agents = response.data || [];
+                const memoryProjects = agents
+                    .filter((a) => a.name?.startsWith('claude-code-memory-'))
+                    .map((agent) => ({
+                        agent_id: agent.id,
+                        agent_name: agent.name,
+                        project_slug: agent.name.replace('claude-code-memory-', ''),
+                        created_at: agent.created_at,
+                        description: agent.description,
+                    }));
+
+                return {
+                    text: JSON.stringify(
+                        {
+                            total_projects: memoryProjects.length,
+                            projects: memoryProjects,
+                            timestamp: new Date().toISOString(),
+                        },
+                        null,
+                        2,
+                    ),
+                };
+            } catch (error) {
+                logger.error('Error fetching memory projects', { error: error.message });
+                return {
+                    text: JSON.stringify(
+                        {
+                            error: error.message,
+                            timestamp: new Date().toISOString(),
+                        },
+                        null,
+                        2,
+                    ),
+                };
+            }
+        },
+    });
+
+    // Project Memory Overview Resource Template
+    registerResourceTemplate({
+        uriTemplate: 'letta://memories/{project}/overview',
+        name: 'project_memory_overview',
+        title: 'Project Memory Overview',
+        description: 'Overview of all memories stored for a specific project',
+        mimeType: 'application/json',
+    });
+
+    // Coding Memories Documentation Resource
+    registerResource({
+        uri: 'letta://docs/coding-memories',
+        name: 'coding_memories_docs',
+        title: 'Coding Memories Documentation',
+        description: 'Documentation for using the coding memories feature with Claude Code',
+        mimeType: 'text/markdown',
+        handler: async () => {
+            return {
+                text: `# Coding Memories for Claude Code
+
+## Overview
+
+The Coding Memories feature enables Claude Code to store and retrieve persistent knowledge across coding sessions. This includes:
+
+- **Project Context**: Tech stack, conventions, project structure
+- **Code Patterns**: Reusable code snippets and patterns
+- **Decisions**: Architectural and design decisions with rationale
+- **Learnings**: Bug fixes, gotchas, tips, and solutions
+
+## Quick Start
+
+### 1. Initialize a Project
+
+Before storing memories, initialize a project:
+
+\`\`\`
+init_project_memory(project="my-project")
+\`\`\`
+
+This creates a dedicated Letta agent to store memories for the project.
+
+### 2. Store Memories
+
+**Store a code pattern:**
+\`\`\`
+store_code_pattern(
+    project="my-project",
+    name="useAsync hook",
+    pattern="const useAsync = (asyncFn) => {...}",
+    language="typescript",
+    tags=["hooks", "async"]
+)
+\`\`\`
+
+**Record a decision:**
+\`\`\`
+record_decision(
+    project="my-project",
+    title="Use PostgreSQL over MongoDB",
+    decision="PostgreSQL",
+    rationale="Need ACID compliance and complex joins",
+    alternatives=["MongoDB", "SQLite"]
+)
+\`\`\`
+
+**Store a learning:**
+\`\`\`
+store_learning(
+    project="my-project",
+    title="Race condition in useEffect",
+    category="bug_fix",
+    problem="State updates after unmount",
+    solution="Add cleanup function with abort controller"
+)
+\`\`\`
+
+### 3. Recall Memories
+
+**Smart contextual recall:**
+\`\`\`
+recall_relevant(
+    project="my-project",
+    task="implementing user authentication",
+    file_path="src/auth/login.ts"
+)
+\`\`\`
+
+**Quick search:**
+\`\`\`
+quick_recall(
+    project="my-project",
+    query="authentication patterns"
+)
+\`\`\`
+
+## Memory Types
+
+### Code Patterns
+Store reusable code snippets with metadata:
+- Language and framework tags
+- Usage instructions
+- Examples and notes
+
+### Decisions (ADRs)
+Record architectural decisions:
+- Context and alternatives considered
+- Rationale for the choice
+- Expected consequences
+
+### Learnings
+Track knowledge gained:
+- \`bug_fix\`: Bugs found and their solutions
+- \`gotcha\`: Common pitfalls to avoid
+- \`tip\`: Best practices and tips
+- \`solution\`: Problems solved
+- \`convention\`: Coding standards
+
+## Bulk Operations
+
+**Export all memories:**
+\`\`\`
+export_project_memories(project="my-project")
+\`\`\`
+
+**Import memories:**
+\`\`\`
+import_project_memories(
+    project="my-project",
+    memories=<export_data>,
+    create_if_missing=true
+)
+\`\`\`
+
+**Clear memories:**
+\`\`\`
+clear_project_memories(project="my-project", confirm=true)
+\`\`\`
+
+## Best Practices
+
+1. **Be specific**: Use descriptive names and detailed explanations
+2. **Tag consistently**: Use consistent tags for better searchability
+3. **Update context**: Keep project context current with tech stack changes
+4. **Export regularly**: Back up memories for important projects
+5. **Use recall_relevant**: Let the system find contextually relevant memories
+
+## Available Tools
+
+### Project Management
+- \`init_project_memory\` - Initialize project memory storage
+- \`get_project_context\` - Get project context and stats
+- \`update_project_context\` - Update project metadata
+- \`list_memory_projects\` - List all projects
+
+### Code Patterns
+- \`store_code_pattern\` - Store a code pattern
+- \`search_code_patterns\` - Search patterns
+- \`list_code_patterns\` - List all patterns
+- \`get_code_pattern\` - Get specific pattern
+
+### Decisions
+- \`record_decision\` - Record a decision
+- \`search_decisions\` - Search decisions
+- \`list_decisions\` - List all decisions
+
+### Learnings
+- \`store_learning\` - Store a learning
+- \`search_learnings\` - Search learnings
+- \`list_learnings\` - List all learnings
+
+### Recall
+- \`recall_relevant\` - Smart contextual recall
+- \`quick_recall\` - Quick semantic search
+- \`get_memory_stats\` - Get memory statistics
+
+### Bulk Operations
+- \`export_project_memories\` - Export all memories
+- \`import_project_memories\` - Import memories
+- \`clear_project_memories\` - Clear all memories
+- \`delete_memory\` - Delete specific memory
+- \`delete_project_memory_agent\` - Delete project agent`,
+            };
+        },
+    });
 }

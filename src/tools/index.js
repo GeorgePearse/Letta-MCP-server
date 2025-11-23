@@ -70,6 +70,60 @@ import {
 import { handleListPrompts, listPromptsToolDefinition } from './prompts/list-prompts.js';
 import { handleUsePrompt, usePromptToolDefinition } from './prompts/use-prompt.js';
 
+// Coding memories imports
+import {
+    // Project management
+    handleInitProjectMemory,
+    initProjectMemoryDefinition,
+    handleGetProjectContext,
+    getProjectContextDefinition,
+    handleUpdateProjectContext,
+    updateProjectContextDefinition,
+    handleListProjects,
+    listProjectsDefinition,
+    // Code patterns
+    handleStoreCodePattern,
+    storeCodePatternDefinition,
+    handleSearchCodePatterns,
+    searchCodePatternsDefinition,
+    handleListCodePatterns,
+    listCodePatternsDefinition,
+    handleGetCodePattern,
+    getCodePatternDefinition,
+    // Decisions
+    handleRecordDecision,
+    recordDecisionDefinition,
+    handleSearchDecisions,
+    searchDecisionsDefinition,
+    handleListDecisions,
+    listDecisionsDefinition,
+    // Learnings
+    handleStoreLearning,
+    storeLearningDefinition,
+    handleSearchLearnings,
+    searchLearningsDefinition,
+    handleListLearnings,
+    listLearningsDefinition,
+    // Smart recall
+    handleRecallRelevant,
+    recallRelevantDefinition,
+    handleQuickRecall,
+    quickRecallDefinition,
+    handleGetMemoryStats,
+    getMemoryStatsDefinition,
+    // Bulk operations
+    handleExportProjectMemories,
+    exportProjectMemoriesDefinition,
+    handleImportProjectMemories,
+    importProjectMemoriesDefinition,
+    handleClearProjectMemories,
+    clearProjectMemoriesDefinition,
+    handleDeleteMemory,
+    deleteMemoryDefinition,
+    handleDeleteProjectMemoryAgent,
+    deleteProjectMemoryAgentDefinition,
+} from './coding_memories/index.js';
+
 import {
     CallToolRequestSchema,
     ListToolsRequestSchema,
@@ -116,6 +170,34 @@ export function registerToolHandlers(server) {
         addMcpToolToLettaDefinition,
         listPromptsToolDefinition,
         usePromptToolDefinition,
+        // Coding memories - Project management
+        initProjectMemoryDefinition,
+        getProjectContextDefinition,
+        updateProjectContextDefinition,
+        listProjectsDefinition,
+        // Coding memories - Code patterns
+        storeCodePatternDefinition,
+        searchCodePatternsDefinition,
+        listCodePatternsDefinition,
+        getCodePatternDefinition,
+        // Coding memories - Decisions
+        recordDecisionDefinition,
+        searchDecisionsDefinition,
+        listDecisionsDefinition,
+        // Coding memories - Learnings
+        storeLearningDefinition,
+        searchLearningsDefinition,
+        listLearningsDefinition,
+        // Coding memories - Smart recall
+        recallRelevantDefinition,
+        quickRecallDefinition,
+        getMemoryStatsDefinition,
+        // Coding memories - Bulk operations
+        exportProjectMemoriesDefinition,
+        importProjectMemoriesDefinition,
+        clearProjectMemoriesDefinition,
+        deleteMemoryDefinition,
+        deleteProjectMemoryAgentDefinition,
     ];
 
     // Enhance all tools with output schemas and improved descriptions
@@ -191,6 +273,56 @@ export function registerToolHandlers(server) {
                 return handleListPrompts(server, request.params.arguments);
             case 'use_prompt':
                 return handleUsePrompt(server, request.params.arguments);
+            // Coding memories - Project management
+            case 'init_project_memory':
+                return handleInitProjectMemory(server, request.params.arguments);
+            case 'get_project_context':
+                return handleGetProjectContext(server, request.params.arguments);
+            case 'update_project_context':
+                return handleUpdateProjectContext(server, request.params.arguments);
+            case 'list_memory_projects':
+                return handleListProjects(server, request.params.arguments);
+            // Coding memories - Code patterns
+            case 'store_code_pattern':
+                return handleStoreCodePattern(server, request.params.arguments);
+            case 'search_code_patterns':
+                return handleSearchCodePatterns(server, request.params.arguments);
+            case 'list_code_patterns':
+                return handleListCodePatterns(server, request.params.arguments);
+            case 'get_code_pattern':
+                return handleGetCodePattern(server, request.params.arguments);
+            // Coding memories - Decisions
+            case 'record_decision':
+                return handleRecordDecision(server, request.params.arguments);
+            case 'search_decisions':
+                return handleSearchDecisions(server, request.params.arguments);
+            case 'list_decisions':
+                return handleListDecisions(server, request.params.arguments);
+            // Coding memories - Learnings
+            case 'store_learning':
+                return handleStoreLearning(server, request.params.arguments);
+            case 'search_learnings':
+                return handleSearchLearnings(server, request.params.arguments);
+            case 'list_learnings':
+                return handleListLearnings(server, request.params.arguments);
+            // Coding memories - Smart recall
+            case 'recall_relevant':
+                return handleRecallRelevant(server, request.params.arguments);
+            case 'quick_recall':
+                return handleQuickRecall(server, request.params.arguments);
+            case 'get_memory_stats':
+                return handleGetMemoryStats(server, request.params.arguments);
+            // Coding memories - Bulk operations
+            case 'export_project_memories':
+                return handleExportProjectMemories(server, request.params.arguments);
+            case 'import_project_memories':
+                return handleImportProjectMemories(server, request.params.arguments);
+            case 'clear_project_memories':
+                return handleClearProjectMemories(server, request.params.arguments);
+            case 'delete_memory':
+                return handleDeleteMemory(server, request.params.arguments);
+            case 'delete_project_memory_agent':
+                return handleDeleteProjectMemoryAgent(server, request.params.arguments);
             default:
                 throw new McpError(
                     ErrorCode.MethodNotFound,
@@ -233,6 +365,34 @@ export const toolDefinitions = enhanceAllTools([
     addMcpToolToLettaDefinition,
     listPromptsToolDefinition,
     usePromptToolDefinition,
+    // Coding memories - Project management
+    initProjectMemoryDefinition,
+    getProjectContextDefinition,
+    updateProjectContextDefinition,
+    listProjectsDefinition,
+    // Coding memories - Code patterns
+    storeCodePatternDefinition,
+    searchCodePatternsDefinition,
+    listCodePatternsDefinition,
+    getCodePatternDefinition,
+    // Coding memories - Decisions
+    recordDecisionDefinition,
+    searchDecisionsDefinition,
+    listDecisionsDefinition,
+    // Coding memories - Learnings
+    storeLearningDefinition,
+    searchLearningsDefinition,
+    listLearningsDefinition,
+    // Coding memories - Smart recall
+    recallRelevantDefinition,
+    quickRecallDefinition,
+    getMemoryStatsDefinition,
+    // Coding memories - Bulk operations
+    exportProjectMemoriesDefinition,
+    importProjectMemoriesDefinition,
+    clearProjectMemoriesDefinition,
+    deleteMemoryDefinition,
+    deleteProjectMemoryAgentDefinition,
 ]);
 
 // Export all tool handlers
@@ -266,4 +426,32 @@ export const toolHandlers = {
     handleGetAgentSummary,
     handleBulkDeleteAgents,
     handleAddMcpToolToLetta,
+    // Coding memories - Project management
+    handleInitProjectMemory,
+    handleGetProjectContext,
+    handleUpdateProjectContext,
+    handleListProjects,
+    // Coding memories - Code patterns
+    handleStoreCodePattern,
+    handleSearchCodePatterns,
+    handleListCodePatterns,
+    handleGetCodePattern,
+    // Coding memories - Decisions
+    handleRecordDecision,
+    handleSearchDecisions,
+    handleListDecisions,
+    // Coding memories - Learnings
+    handleStoreLearning,
+    handleSearchLearnings,
+    handleListLearnings,
+    // Coding memories - Smart recall
+    handleRecallRelevant,
+    handleQuickRecall,
+    handleGetMemoryStats,
+    // Coding memories - Bulk operations
+    handleExportProjectMemories,
+    handleImportProjectMemories,
+    handleClearProjectMemories,
+    handleDeleteMemory,
+    handleDeleteProjectMemoryAgent,
 };
