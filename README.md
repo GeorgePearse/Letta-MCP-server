@@ -26,6 +26,7 @@ A Model Context Protocol (MCP) server that provides comprehensive tools for agen
 - 🔗 **MCP Server Integration** - Integrate with other MCP servers
 - 📊 **Enhanced Metadata** - Output schemas and behavioral annotations for all tools
 - 📦 **Docker Support** - Easy deployment with Docker
+- 🔄 **LLM Proxy** - Capture all LLM conversations to Letta without latency (see [LLM Proxy](#llm-proxy-for-automatic-memory-capture))
 
 ## Environment Configuration
 
@@ -502,6 +503,70 @@ docker stop letta-mcp
 docker rm letta-mcp
 docker run -d -p 3001:3001 -e PORT=3001 -e NODE_ENV=production --name letta-mcp ghcr.io/oculairmedia/letta-mcp-server:latest
 ```
+
+## LLM Proxy for Automatic Memory Capture
+
+**Problem**: You want to capture all LLM interactions for persistent memory, but MCP calls add latency to every request, and forking your tools requires ongoing maintenance.
+
+**Solution**: A lightweight proxy that sits between your LLM client and the API, capturing all conversations asynchronously without blocking.
+
+```
+Claude Code / Cursor / Any Tool
+            ↓
+    localhost:8080 (proxy)
+            ↓
+    api.anthropic.com
+            ↓ (async, non-blocking)
+    Letta Memory Storage
+```
+
+### Quick Start
+
+```bash
+cd proxy
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure
+export LETTA_BASE_URL=http://localhost:8283/v1
+export LETTA_AGENT_ID=your-memory-agent-id  # Create an agent first
+
+# Run
+python llm_proxy.py
+```
+
+Then point your tool at the proxy:
+
+```bash
+# For Claude Code
+export ANTHROPIC_BASE_URL=http://localhost:8080
+
+# For OpenAI-compatible tools
+export OPENAI_BASE_URL=http://localhost:8080
+```
+
+### Key Features
+
+- **Zero latency impact**: Writes happen in a background queue
+- **Works with any tool**: Just change the base URL environment variable
+- **Handles streaming**: Full SSE support for streaming responses
+- **Resilient**: In-memory buffer with overflow handling
+- **Multi-provider**: Supports both Anthropic and OpenAI APIs
+
+### Docker
+
+```bash
+docker build -t llm-proxy -f proxy/Dockerfile proxy/
+
+docker run -d \
+  -p 8080:8080 \
+  -e LETTA_BASE_URL=http://host.docker.internal:8283/v1 \
+  -e LETTA_AGENT_ID=your-agent-id \
+  llm-proxy
+```
+
+For detailed documentation, see [docs/LLM_PROXY.md](docs/LLM_PROXY.md).
 
 ## Troubleshooting
 
